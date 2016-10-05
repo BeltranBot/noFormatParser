@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>No Format Parser</title>
+  <style>
+ 	 td, th{
+	  border: 1px solid black;
+	}
+  </style>
+</head>
+<body>
+	<table>
+	</table>
+
+  <script>
+  var data = [
+		"Cocos Pure 100% Pure coconut water - $2.50 (1)Gardeners Blueberry Chicken Salad - $8.50 (1)Summer Harvest Fruit Salad - $5.50 (1)",
+		"Mediterranean Veggie and Humus Wrap - $7.50 (1)",
+		"Mediterranean Veggie and Humus Wrap - $7.50 (1)",
+		"Gardeners Blueberry Chicken Salad - $8.50 (1)",
+		"Gardeners Blueberry Chicken Salad - $8.50 (1)",
+		"Mediterranean Veggie and Humus Wrap - $7.50 (1)",
+		"Infinitely Green Super Smoothie - $7.50 (1)Mediterranean Veggie and Humus Wrap - $7.50 (1)",
+		"Gardeners Blueberry Chicken Salad - $8.50 (2)",
+		"Naked Chicken Taco Bowl - $8.00 (1)",
+		"Naked Chicken Taco Bowl - $8.00 (1)",
+		"Chipotle Pepper Veggie Wrap - $7.00 (1)Infinitely Green Super Smoothie - $7.50 (1)Naked Chicken Taco Bowl - $8.00 (1)"
+	];
+	
+	var items = [];
+	var itemsObjArr = [];
+
+	data.forEach(function (line, index) {
+		var regEx = /([^-]*)(?:\s-)[^\(]*\((\d*)\)/g;
+		var row = [];
+		while((row = regEx.exec(line)) != null){
+			if (!items.includes(row[1])) {
+				var arr = new Array(data.length);
+				items.push(row[1]);
+				itemsObjArr.push( { item : row[1], rows : arr } );	
+			}
+			itemsObjArr[items.indexOf(row[1])].rows[index] = row[2];
+		}
+	});
+
+	/* Code to generate table dinamically */ 
+	var htmlTable = document.getElementsByTagName('table')[0];
+	var thead = document.createElement('thead');
+	var tr = document.createElement("tr");
+
+	tr.appendChild(document.createElement('th'));
+
+	for (var i = 0; i < items.length; i++) {
+		var th = document.createElement("th");
+		th.innerHTML = items[i];
+		tr.appendChild(th);
+	};
+
+	thead.appendChild(tr);
+	htmlTable.appendChild(thead);
+
+	var trs = [];
+
+	for (var i = 0; i < data.length; i++) {
+		var td = [];
+		trs.push(document.createElement('tr'));		
+		td.push(document.createElement('td'));
+		td[0].innerHTML = data[i];
+		for (var j = 0; j < itemsObjArr.length; j++) {
+			var temptd = document.createElement('td');
+			temptd.innerHTML = (!!itemsObjArr[j].rows[i]) ?
+				parseInt(itemsObjArr[j].rows[i]) : 0;
+			td.push(temptd);
+		}
+		td.forEach(function(item){
+			trs[i].appendChild(item);
+		});
+	}
+
+	trs.forEach(function(item){
+		htmlTable.appendChild(item);
+	});
+  </script>
+</body>
+</html>
